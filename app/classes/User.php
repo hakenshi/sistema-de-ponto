@@ -58,7 +58,7 @@ class User
 
         try {
 
-            $tipoMarcacao = $this->determinaTipoMarcacao($id_funcionario, $arrayRetorno['data']);
+            $tipoMarcacao = $this->determinaTipoMarcacao($id_funcionario);
             
 
             $sql = "INSERT INTO pontos (id_funcionario, ponto, ponto_tipo) VALUES(:id_funcionario, :ponto, :tipo_ponto)";
@@ -70,7 +70,7 @@ class User
 
             $arrayRetorno['code'] = 200;
             $arrayRetorno['mensagem'] = 'Ponto batido com sucesso';
-
+            $arrayRetorno['tipoPonto'] = $tipoMarcacao;
             return json_encode($arrayRetorno);
         } catch (PDOException $e) {
             return json_encode('Erro ao bater ponto' . $e->getMessage());
@@ -78,13 +78,13 @@ class User
     }
 
 
-    public function determinaTipoMarcacao($id_funcionario, $dateTime)
+    public function determinaTipoMarcacao($id_funcionario)
     {
 
         try {
             $sql = "SELECT COUNT(*) as quantidade_pontos
                 FROM pontos
-                WHERE id_funcionario = :id_funcionario and "
+                WHERE id_funcionario = :id_funcionario"
                 ;
 
             
@@ -92,17 +92,13 @@ class User
             $statement->bindParam(":id_funcionario", $id_funcionario);
             $statement->execute();
             $quantidadeDePontos = $statement->fetchColumn();
-            echo $quantidadeDePontos;
-            exit();
-            if ($quantidadeDePontos === 1) {
-                $arrayRetorno['tipo_ponto'] = "E";
-                return $arrayRetorno;
-            } else if ($quantidadeDePontos === 2) {
-                $arrayRetorno['tipo_ponto'] = "S";
-                return $arrayRetorno;
+            if ($quantidadeDePontos >= 0 ) {
+                return "E";
+            } else if ($quantidadeDePontos == 1) {
+                return "S";
             }
         } catch (PDOException $e) {
-            return 'Erro ao determinar tipo do ponto' . $e->getMessage();
+            return 'Erro ao determinar tipo do ponto ' . $e->getMessage();
         }
 
         return "N/A";
