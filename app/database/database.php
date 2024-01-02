@@ -1,5 +1,4 @@
 <?php
-
     class database{
 
     public static $pdo;  

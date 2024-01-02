@@ -1,11 +1,14 @@
 <?php
 include __DIR__ . '/app/classes/User.php';
+
 if (isset($_SESSION['funcionario']) && $_SESSION['funcionario'] !== null) {
    $nome = $_SESSION['funcionario']['nome'];
    $session_id = $_SESSION['funcionario']['id'];
 } else {
    header("location: index.php");
 }
+
+
 
 $turnos = $objUser->exibeTurnos();
 
@@ -44,7 +47,7 @@ $tipoFuncionarios = $objUser->exibeTipoFuncionario();
                <form id="cadastrar-funcionario">
                <div class="mb-4">
                   <label class="form-label" for="nome">Nome</label>
-                  <input class="form-control" type="text" id="nome" name="nome" autocomplete="off" >
+                  <input class="form-control" type="text" id="nome" name="nome" autocomplete="off" value="<?php echo $_SESSION['funcionario']['nome']?>">
                </div>
                <div class="mb-4">
                   <label class="form-label" for="email">Email</label>
@@ -90,7 +93,7 @@ $tipoFuncionarios = $objUser->exibeTipoFuncionario();
                   <label class="form-label" for="data_nascimento">Data de nascimento</label>
                   <input class="form-control" type="date" id="data_nascimento" name="data_nascimento" autocomplete="off">
                </div>
-               <button class="btn btn-danger my-5" type="submit">Cadastrar Funcionário</button>
+               <button class="btn btn-danger my-5" type="submit">Salvar</button>
             </div>
             </form>
          </div>
@@ -104,6 +107,7 @@ $tipoFuncionarios = $objUser->exibeTipoFuncionario();
 
    <script src="js/jquery-3.7.1.min.js"></script>
    <script src="js/ajax-adm.js"></script>
+   <script src="js/script.js"></script>
 </body>
 
 </html>

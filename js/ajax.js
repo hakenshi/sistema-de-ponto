@@ -21,6 +21,7 @@ $(function () {
                 if(response.code === 200){
                 result.addClass("alert alert-success")
                 result.html(`${response.mensagem}`)
+
                 result.fadeOut(7000,()=>{
                 result.remove()
                 });
@@ -29,6 +30,7 @@ $(function () {
             else{
                 result.addClass("alert alert-danger")
                 result.html(response.mensagem)
+                
                 result.fadeOut(7000,()=>{
                 result.remove()
                 });

@@ -1,10 +1,12 @@
 <?php
 
 session_start();
-require_once '/xampp/htdocs/sistema-de-ponto/app/database/database.php';
+
+require_once '/Programas/xampp/htdocs/sistema-de-ponto/app/database/database.php';
 
 class User
 {
+
     private $pdo;
 
     public function __construct()
@@ -46,11 +48,11 @@ class User
         $arrayRetorno['data'] = $dateTime->format("d/m/Y H:i");
         $dateFormat = $dateTime->format("Y-m-d H:i:s");
         $exibeMarcacao = json_decode($this->exibeMarcacao($id_funcionario));
-        
+
         if ($exibeMarcacao !== null) {
             $ultimoPonto =  new DateTime($exibeMarcacao);
             $intervalo = $dateTime->diff($ultimoPonto);
-            if ($intervalo->format('%H:%I:%S') < "00:00:10") {
+            if ($intervalo->format('%H:%I:%S') < "00:30:00") {
                 $arrayRetorno['mensagem'] = "Por favor aguardar antes de bater outro ponto!";
                 return json_encode($arrayRetorno);
             }
@@ -59,7 +61,7 @@ class User
         try {
 
             $tipoMarcacao = $this->determinaTipoMarcacao($id_funcionario);
-            
+
 
             $sql = "INSERT INTO pontos (id_funcionario, ponto, ponto_tipo) VALUES(:id_funcionario, :ponto, :tipo_ponto)";
             $statement = $this->pdo->prepare($sql);
@@ -84,15 +86,14 @@ class User
         try {
             $sql = "SELECT COUNT(*) as quantidade_pontos
                 FROM pontos
-                WHERE id_funcionario = :id_funcionario"
-                ;
+                WHERE id_funcionario = :id_funcionario";
 
-            
+
             $statement = $this->pdo->prepare($sql);
             $statement->bindParam(":id_funcionario", $id_funcionario);
             $statement->execute();
             $quantidadeDePontos = $statement->fetchColumn();
-            if ($quantidadeDePontos >= 0 ) {
+            if ($quantidadeDePontos >= 0) {
                 return "E";
             } else if ($quantidadeDePontos == 1) {
                 return "S";
@@ -118,7 +119,7 @@ class User
             $statement = $this->pdo->prepare($sql);
             $statement->bindParam(":id_funcionario", $id_funcionario, PDO::PARAM_INT);
             $statement->execute();
-
+            
             if ($statement->rowCount() >= 1) {
                 $data = $statement->fetch(PDO::FETCH_ASSOC)['ponto'];
                 return json_encode($data);
@@ -129,7 +130,30 @@ class User
             return 'Erro ao exibir último ponto batido' . $e->getMessage();
         }
     }
-}
+    public function exibeTurnos()
+    {
+        $sql = "SELECT * FROM turnos";
+        $statement = $this->pdo->prepare($sql);
+        $statement->execute();
+
+        $turnos = $statement->fetchAll();
+
+        return $turnos;
+        }
+        
+        public function exibeTipoFuncionario()
+        {
+            $sql = "SELECT *
+            FROM tipos_de_funcionario";
+            $statement = $this->pdo->prepare($sql);
+            $statement->execute();
+    
+            $tipoFuncionario = $statement->fetchAll();
+    
+            return $tipoFuncionario;
+            }
+    }
+
 
 $objUser = new User;
 

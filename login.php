@@ -11,10 +11,10 @@ if (isset($_POST['login']) && !empty($_POST['login']) && isset($_POST['senha']) 
      $senha = addslashes($_POST['senha']);
 
     if($objUser->login($login,$senha) == true){
-          if($_SESSION['funcionario']['id_tipo'] == 1){
-          header("Location: admin_page.php");
+          if($_SESSION['funcionario']['id_tipo'] == 2){
+          header("Location: list_data_page.php");
      }
-     elseif($_SESSION['funcionario']['id_tipo'] == 2){
+     elseif($_SESSION['funcionario']['id_tipo'] == 1){
           header("location: user_page.php");
      }
          
