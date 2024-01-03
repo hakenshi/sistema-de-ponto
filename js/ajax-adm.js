@@ -1,7 +1,7 @@
 $(()=>{
     const cadastrarFuncionario = $("#cadastrar-funcionario")
 
-    const status = $("#status")
+    const status = $(".status")
     
     status.on("click", ()=>{
         $.ajax({

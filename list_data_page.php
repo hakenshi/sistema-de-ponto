@@ -59,7 +59,7 @@ $funcionarios = $admin->listarUsuarios();
                      echo "<td>" .date('d/m/Y', strtotime($funcionario['data_nascimento'])) . "</td>";
                      echo "<td>" . date('d/m/Y', strtotime($funcionario['data_admissao'])) . "</td>";
                      echo "<td><a href='manage_users.php?=".$funcionario['id']."'><button class='btn btn-primary'>  Editar </button></a> </td>";
-                     echo "<td><button id='status' class='btn ".($funcionario['funcionario_status'] == '1' ? 'btn-danger' : 'btn-success')."'>".($funcionario['funcionario_status'] == '1' ? "Inativar" : "Ativar")."</button> </td>";
+                     echo "<td><button class='status btn ".($funcionario['funcionario_status'] == '1' ? 'btn-danger' : 'btn-success')."'>".($funcionario['funcionario_status'] == '1' ? "Inativar" : "Ativar")."</button> </td>";
                      echo "<input type='hidden' id='id-funcionario' name='id-funcionario' value=".$funcionario['id'] .">";
                      echo "<input type='hidden' id='status-funcionario' name='id-funcionario' value=".$funcionario['funcionario_status'] .">";
                      echo "</tr>";
