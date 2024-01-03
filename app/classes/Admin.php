@@ -45,7 +45,7 @@ class Admin
 
         try {
 
-            $sql = "INSERT INTO funcionarios (id_tipo, id_turno, nome, email, senha, cpf, matricula, cargo, data_nascimento, data_admissao) VALUES(:tipo_funcionario,:turno, :nome ,:email, :senha, :cpf,:matricula, :cargo, :data_nascimento, now())";
+            $sql = "INSERT INTO funcionarios (id_tipo, id_turno, nome, email, senha, cpf, matricula, cargo, data_nascimento, data_admissao, funcionario_status) VALUES(:tipo_funcionario,:turno, :nome ,:email, :senha, :cpf,:matricula, :cargo, :data_nascimento, now(), 1)";
 
             $senhaHash = password_hash($senha, PASSWORD_DEFAULT);
 
@@ -71,8 +71,29 @@ class Admin
         }
     }
 
-    public function atualizarFuncionario(){
-
+    public function alteraStatus($idFuncionario, $status){
+        try {
+            if($status == 1){
+                $sql = "UPDATE funcionarios SET funcionario_status = '0' WHERE id= :id_funcionario";
+                $statement = $this->pdo->prepare($sql);
+                $statement->bindParam(":id_funcionario", $idFuncionario);
+                $statement->execute();
+                $arrayRetorno['code'] = 200;
+                $arrayRetorno['mensagem'] = "Funcionário inativado com sucesso";
+                return json_encode($arrayRetorno);
+            }
+            elseif($status == 0){
+                $sql = "UPDATE funcionarios SET funcionario_status = '1' WHERE id= :id_funcionario";
+                $statement = $this->pdo->prepare($sql);
+                $statement->bindParam(":id_funcionario", $idFuncionario);
+                $statement->execute();
+                $arrayRetorno['code'] = 200;
+                $arrayRetorno['mensagem'] = "Funcionário ativado com sucesso";
+                return json_encode($arrayRetorno);
+            }
+        } catch (\Throwable $e) {
+            return json_encode("ERRO AO ALTERAR STATUS DO FUCNIONÁRIO: " . $e->getMessage());
+        }
     }
 
     public function listarUsuarios()
@@ -102,4 +123,8 @@ if (isset($_POST['nome'], $_POST['turno'], $_POST['tipo_funcionario'], $_POST['e
 
     echo $cadastro;
 
+}
+
+if(isset($_POST['status'], $_POST['idFuncionario'])){
+    echo $admin->alteraStatus($_POST['idFuncionario'],$_POST['status']);
 }

@@ -56,15 +56,16 @@ $tipoFuncionarios = $objUser->exibeTipoFuncionario();
                </div>
                <div class="mb-4">
                   <label class="form-label" for="cpf">CPF</label>
-                  <input class="form-control" type="text" id="cpf" name="cpf" autocomplete="off">
+                  <input class="form-control" type="text" id="cpf" name="cpf" autocomplete="off" maxlength="14" placeholder="399.049.970-04">
                </div>
                <div class="mb-4">
                   <label class="form-label" for="matricula">Matrícula</label>
                   <input class="form-control" type="text" id="matricula" name="matricula" autocomplete="off">
                </div>
                <div class="mb-4">
-                  <label class="form-label" for="turno">Turnos</label>
+                  <label class="form-label" for="turno">Turnos: </label> <br>
                   <select class="custom-select" name="turno" id="turno">
+                     <option value="0">Selecione um turno</option>
                      <?php
                      foreach ($turnos as $turno) {
                         echo "<option value=" . $turno['id'] . ">" . $turno['hora_entrada'] . " - " . $turno['hora_saida'] . "</option>";
@@ -73,8 +74,9 @@ $tipoFuncionarios = $objUser->exibeTipoFuncionario();
                   </select>
                </div>
                <div class="mb-4">
-                  <label class="form-label" for="tipo_funcionario">Tipo de funcionário</label>
+                  <label class="form-label" for="tipo_funcionario">Tipo de funcionário: </label> <br>
                   <select class="custom-select" name="tipo_funcionario" id="tipo_funcionario">
+                  <option value="0">Selecione um tipo de funcionário</option>
                      <?php
                      foreach ($tipoFuncionarios as $tipoFuncionario) {
                         echo "<option value=" . $tipoFuncionario['id'] . ">" . $tipoFuncionario['user_type'] . "</option>";
@@ -101,9 +103,24 @@ $tipoFuncionarios = $objUser->exibeTipoFuncionario();
    </body>
 
    </html>
-
    <script src="js/jquery-3.7.1.min.js"></script>
    <script src="js/ajax-adm.js"></script>
+   <script>
+        const cpf = document.querySelector("#cpf")
+
+        cpf.addEventListener('keypress', ()=>{
+            let cpfLength = cpf.value.length
+
+            if (cpfLength === 3 || cpfLength === 7) {
+                cpf.value += '.'
+            }
+            else if(cpfLength === 11){
+                cpf.value += '-'
+            }
+        })
+    </script>
+   
+   
 </body>
 
 </html>

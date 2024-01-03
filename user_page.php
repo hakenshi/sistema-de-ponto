@@ -8,6 +8,8 @@ if (isset($_SESSION['funcionario']) && $_SESSION['funcionario'] !== null) {
   header("location: index.php");
 }
 
+$funcionario_status = $_SESSION['funcionario']['funcionario_status'];
+
 
 
 ?>
@@ -38,7 +40,16 @@ if (isset($_SESSION['funcionario']) && $_SESSION['funcionario'] !== null) {
         <p class="fs-2 fw-bold">Hora Atual:</p>
         <p class="fs-4 fw-bold" id="hora-atual"></p>
         <input type="hidden" id="id-funcionario" name="id-funcionario" value="<?php echo $session_id ?>">
+        <?php 
+          if($funcionario_status == 0){
+              echo '<button name="ponto" class="btn btn-danger" id="bater-ponto" disabled> Bater ponto</button>';
+          }
+          else{
+        ?>
         <button name="ponto" class="btn btn-danger" id="bater-ponto"> Bater ponto</button>
+        <?php 
+          }
+        ?>
       </div>
 
       <!-- <div class="row"> -->

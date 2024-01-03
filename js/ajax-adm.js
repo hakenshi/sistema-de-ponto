@@ -1,6 +1,23 @@
 $(()=>{
     const cadastrarFuncionario = $("#cadastrar-funcionario")
-    const atualizarFuncionario = $("#atualizar-funcionario")
+
+    const status = $("#status")
+    
+    status.on("click", ()=>{
+        $.ajax({
+            type: "post",
+            url: "app/classes/Admin.php",
+            data:{
+                status: $("#status-funcionario").val(),
+                idFuncionario: $("#id-funcionario").val()
+            },
+            dataType: "json",
+            success: function (response) {
+                alert(response.mensagem)
+                location.reload()
+            }
+        });
+    })
 
     cadastrarFuncionario.on("submit", e =>{
         e.preventDefault()
@@ -22,7 +39,7 @@ $(()=>{
             success: function (response) {
                 if(response.code === 200){
                     alert(response.mensagem)
-                    cadastrarFuncionario.reset()
+                    location.replace('/list_data_page.php')
                 }
                 else{
                     alert("Erro ao cadastrar funcionário")

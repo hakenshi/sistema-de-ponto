@@ -29,22 +29,21 @@ $funcionarios = $admin->listarUsuarios();
    ?>
    <div class="container">
       <div class="row">
-         <h1 class="p-4 text-center">Usuários Cadastrados no sistema</h1>
+         <h1 class="p-4 text-center">Tabela de Funcionários</h1>
          <div class="col table-responsive-md ">
             <table class="table table-bordered table-sm" id="listar-usuarios">
                <thead class="text-center" style="background-color: #da0037; color: white;">
                   <tr>
                      <th class="px-3 text-center">Tipo</th>
-                     <th class="px-3 text-center">Turno</th>
-                     <th class="px-3">Nome</th>
-                     <th class="px-3">Email</th>
-                     <th class="px-3">Cpf</th>
-                     <th class="px-3">Matricula</th>
+                      <th class="px-3">Nome</th>
+                     <th class="px-3">E-mail</th>
+                     <th class="px-3">CPF</th>
+                     <th class="px-3">Matrícula</th>
                      <th class="px-3">Cargo</th>
-                     <th class="px-3">Data de nascimento</th>
-                     <th class="px-3">Data de Admissao</th>
+                     <th class="px-3">Data de Nascimento</th>
+                     <th class="px-3">Data de Admissão</th>
                      <th class="px-3"></th>
-                     <th class="px-3"></th>
+                     <th class="px-3">Status</th>
                   </tr>
                </thead>
                <tbody class="">
@@ -57,10 +56,12 @@ $funcionarios = $admin->listarUsuarios();
                      echo "<td>" . $funcionario['cpf'] . "</td>";
                      echo "<td>" . $funcionario['matricula'] . "</td>";
                      echo "<td>" . $funcionario['cargo'] . "</td>";
-                     echo "<td>" . $funcionario['data_nascimento'] . "</td>";
-                     echo "<td>" . $funcionario['data_admissao'] . "</td>";
+                     echo "<td>" .date('d/m/Y', strtotime($funcionario['data_nascimento'])) . "</td>";
+                     echo "<td>" . date('d/m/Y', strtotime($funcionario['data_admissao'])) . "</td>";
                      echo "<td><a href='manage_users.php?=".$funcionario['id']."'><button class='btn btn-primary'>  Editar </button></a> </td>";
-                     echo "<td><button class='btn btn-danger'> Inativar </button> </td>";
+                     echo "<td><button id='status' class='btn ".($funcionario['funcionario_status'] == '1' ? 'btn-danger' : 'btn-success')."'>".($funcionario['funcionario_status'] == '1' ? "Inativar" : "Ativar")."</button> </td>";
+                     echo "<input type='hidden' id='id-funcionario' name='id-funcionario' value=".$funcionario['id'] .">";
+                     echo "<input type='hidden' id='status-funcionario' name='id-funcionario' value=".$funcionario['funcionario_status'] .">";
                      echo "</tr>";
                   }
                   ?>
