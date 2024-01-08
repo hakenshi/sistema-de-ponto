@@ -109,8 +109,6 @@
   <div class="collapse navbar-collapse" id="main_nav">
 	
 	<ul class="navbar-nav ms-auto text-left">
-		<li class="nav-item"><a class="nav-link active" href="user_profile.php">Ver Perfil </a></li>
-		<li class="nav-item"><a class="nav-link active" href="#">Estatísticas</a></li>
 		<li class="nav-item"><a class="nav-link active" href="logout.php">Sair</a></li>
 	</ul>
 

@@ -2,16 +2,24 @@
 include __DIR__ . '/app/classes/Admin.php';
 include __DIR__ . '/app/classes/User.php';
 
-if (isset($_SESSION['funcionario']) && $_SESSION['funcionario'] !== null) {
+
+
+if (isset($_SESSION['funcionario']) && $_SESSION['funcionario'] !== null && $objUser->checkAdmin() == 2) {
    $nome = $_SESSION['funcionario']['nome'];
    $session_id = $_SESSION['funcionario']['id'];
 } else {
+   session_unset();
+   session_destroy();
+   unset($_SESSION['funcionario']);
    header("location: index.php");
 }
 
 $admin = new Admin;
 
 $funcionarios = $admin->listarUsuarios();
+
+
+
 ?>
 
 <!DOCTYPE html>
@@ -35,6 +43,7 @@ $funcionarios = $admin->listarUsuarios();
                <thead class="text-center" style="background-color: #da0037; color: white;">
                   <tr>
                      <th class="px-3 text-center">Tipo</th>
+                     <th class="px-3 text-center">Turno</th>
                       <th class="px-3">Nome</th>
                      <th class="px-3">E-mail</th>
                      <th class="px-3">CPF</th>
@@ -51,6 +60,7 @@ $funcionarios = $admin->listarUsuarios();
                   foreach ($funcionarios as $funcionario) {
                      echo "<tr>";
                      echo "<td>" . ($funcionario['id_tipo'] == '1' ? 'Funcionário' : 'Adminsitrador') . "</td>";
+                     echo "<td>" . $objUser->exibeTurnos($funcionario['id_turno'])['hora_entrada']. " - ". $objUser->exibeTurnos($funcionario['id_turno'])['hora_saida'] . "</td>";
                      echo "<td>" . $funcionario['nome'] . "</td>";
                      echo "<td>" . $funcionario['email'] . "</td>";
                      echo "<td>" . $funcionario['cpf'] . "</td>";
@@ -58,10 +68,8 @@ $funcionarios = $admin->listarUsuarios();
                      echo "<td>" . $funcionario['cargo'] . "</td>";
                      echo "<td>" .date('d/m/Y', strtotime($funcionario['data_nascimento'])) . "</td>";
                      echo "<td>" . date('d/m/Y', strtotime($funcionario['data_admissao'])) . "</td>";
-                     echo "<td><a href='manage_users.php?=".$funcionario['id']."'><button class='btn btn-primary'>  Editar </button></a> </td>";
-                     echo "<td><button class='status btn ".($funcionario['funcionario_status'] == '1' ? 'btn-danger' : 'btn-success')."'>".($funcionario['funcionario_status'] == '1' ? "Inativar" : "Ativar")."</button> </td>";
-                     echo "<input type='hidden' id='id-funcionario' name='id-funcionario' value=".$funcionario['id'] .">";
-                     echo "<input type='hidden' id='status-funcionario' name='id-funcionario' value=".$funcionario['funcionario_status'] .">";
+                     echo "<td><a href='manage_users.php?id=".$funcionario['id']."'><button class='btn btn-primary'>  Editar </button></a> </td>";
+                     echo "<td><button onclick='alterarStatus(".$funcionario['id'].", ".$funcionario['funcionario_status'].")' class='status btn ".($funcionario['funcionario_status'] == '1' ? 'btn-danger' : 'btn-success')."'>".($funcionario['funcionario_status'] == '1' ? "Inativar" : "Ativar")."</button> </td>";
                      echo "</tr>";
                   }
                   ?>

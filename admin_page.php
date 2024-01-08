@@ -1,11 +1,16 @@
 <?php
 include __DIR__ . '/app/classes/User.php';
-if (isset($_SESSION['funcionario']) && $_SESSION['funcionario'] !== null) {
+
+if (isset($_SESSION['funcionario']) && $_SESSION['funcionario'] !== null && $objUser->checkAdmin() == 2) {
    $nome = $_SESSION['funcionario']['nome'];
    $session_id = $_SESSION['funcionario']['id'];
 } else {
+   session_unset();
+   session_destroy();
+   unset($_SESSION['funcionario']);
    header("location: index.php");
 }
+
 
 $turnos = $objUser->exibeTurnos();
 
@@ -65,7 +70,7 @@ $tipoFuncionarios = $objUser->exibeTipoFuncionario();
                <div class="mb-4">
                   <label class="form-label" for="turno">Turnos: </label> <br>
                   <select class="custom-select" name="turno" id="turno">
-                     <option value="0">Selecione um turno</option>
+                     <option>Selecione um turno</option>
                      <?php
                      foreach ($turnos as $turno) {
                         echo "<option value=" . $turno['id'] . ">" . $turno['hora_entrada'] . " - " . $turno['hora_saida'] . "</option>";
@@ -76,7 +81,7 @@ $tipoFuncionarios = $objUser->exibeTipoFuncionario();
                <div class="mb-4">
                   <label class="form-label" for="tipo_funcionario">Tipo de funcionário: </label> <br>
                   <select class="custom-select" name="tipo_funcionario" id="tipo_funcionario">
-                  <option value="0">Selecione um tipo de funcionário</option>
+                  <option>Selecione um tipo de funcionário</option>
                      <?php
                      foreach ($tipoFuncionarios as $tipoFuncionario) {
                         echo "<option value=" . $tipoFuncionario['id'] . ">" . $tipoFuncionario['user_type'] . "</option>";

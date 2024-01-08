@@ -42,11 +42,12 @@ $funcionario_status = $_SESSION['funcionario']['funcionario_status'];
         <input type="hidden" id="id-funcionario" name="id-funcionario" value="<?php echo $session_id ?>">
         <?php 
           if($funcionario_status == 0){
-              echo '<button name="ponto" class="btn btn-danger" id="bater-ponto" disabled> Bater ponto</button>';
+            echo '<button name="ponto" class="btn btn-danger" id="bater-ponto" disabled> Bater ponto</button>';
           }
           else{
         ?>
         <button name="ponto" class="btn btn-danger" id="bater-ponto"> Bater ponto</button>
+        <button id="espera" class="btn btn-primary" disabled style="display: none;"> Batendo ponto...</button>
         <?php 
           }
         ?>

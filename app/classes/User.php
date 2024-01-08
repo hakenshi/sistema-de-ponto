@@ -18,19 +18,22 @@ class User
     public function login($login, $senha)
     {
         try {
-
-            $sql = "SELECT * FROM funcionarios WHERE email = :email AND senha = :senha";
+            echo $senha . "<br>";
+            $sql = "SELECT * FROM funcionarios WHERE email = :email";
             $statement = $this->pdo->prepare($sql);
             $statement->bindValue(":email", $login);
-            $statement->bindValue(":senha", $senha);
             $statement->execute();
-
+            
             if ($statement->rowCount() > 0) {
                 $data = $statement->fetch(PDO::FETCH_ASSOC);
-
+                if(password_verify($senha, $data['senha'])){
                 $_SESSION['funcionario'] = $data;
 
                 return true;
+            }
+            else{
+            return false;
+            }
             } else {
                 return false;
             }
@@ -39,7 +42,7 @@ class User
         }
     }
 
-    public function baterPonto($id_funcionario)
+    public function baterPonto($id_funcionario, $latitude, $longitude)
     {
 
         date_default_timezone_set("America/Sao_Paulo");
@@ -61,13 +64,19 @@ class User
         try {
 
             $tipoMarcacao = $this->determinaTipoMarcacao($id_funcionario);
+            if ($_SESSION['funcionario']['funcionario_status'] == 0) {
+                $arrayRetorno['code'] = 401;
+                $arrayRetorno['mensagem'] = "Funcionário inativo";
+                return json_encode($arrayRetorno);
+            }
 
-
-            $sql = "INSERT INTO pontos (id_funcionario, ponto, ponto_tipo) VALUES(:id_funcionario, :ponto, :tipo_ponto)";
+            $sql = "INSERT INTO pontos (id_funcionario, ponto, ponto_tipo,latitude,longitude) VALUES(:id_funcionario, :ponto, :tipo_ponto,:latitude,:longitude)";
             $statement = $this->pdo->prepare($sql);
             $statement->bindParam(":id_funcionario", $id_funcionario);
             $statement->bindParam(":ponto", $dateFormat);
             $statement->bindParam(":tipo_ponto", $tipoMarcacao);
+            $statement->bindParam(":latitude", $latitude);
+            $statement->bindParam(":longitude", $longitude);
             $statement->execute();
 
             $arrayRetorno['code'] = 200;
@@ -75,7 +84,7 @@ class User
             $arrayRetorno['tipoPonto'] = $tipoMarcacao;
             return json_encode($arrayRetorno);
         } catch (PDOException $e) {
-            return json_encode('Erro ao bater ponto' . $e->getMessage());
+            return json_encode('Erro ao bater ponto ' . $e->getMessage());
         }
     }
 
@@ -83,19 +92,22 @@ class User
     public function determinaTipoMarcacao($id_funcionario)
     {
 
+        $date = new DateTime();
+        $dataIncial = $date->format("Y-m-d") . " 00:00:00";
+        $dataFinal = $date->format("Y-m-d") . " 23:59:00";
+
         try {
             $sql = "SELECT COUNT(*) as quantidade_pontos
                 FROM pontos
-                WHERE id_funcionario = :id_funcionario";
-
+                WHERE  id_funcionario = :id_funcionario and ponto between '" . $dataIncial . "' and '" . $dataFinal . "'";
 
             $statement = $this->pdo->prepare($sql);
             $statement->bindParam(":id_funcionario", $id_funcionario);
             $statement->execute();
             $quantidadeDePontos = $statement->fetchColumn();
-            if ($quantidadeDePontos >= 0) {
+            if ($quantidadeDePontos == 0) {
                 return "E";
-            } else if ($quantidadeDePontos == 1) {
+            } else if ($quantidadeDePontos > 0) {
                 return "S";
             }
         } catch (PDOException $e) {
@@ -119,7 +131,7 @@ class User
             $statement = $this->pdo->prepare($sql);
             $statement->bindParam(":id_funcionario", $id_funcionario, PDO::PARAM_INT);
             $statement->execute();
-            
+
             if ($statement->rowCount() >= 1) {
                 $data = $statement->fetch(PDO::FETCH_ASSOC)['ponto'];
                 return json_encode($data);
@@ -130,33 +142,52 @@ class User
             return 'Erro ao exibir último ponto batido' . $e->getMessage();
         }
     }
-    public function exibeTurnos()
+    public function exibeTurnos($id = null)
     {
-        $sql = "SELECT * FROM turnos";
+        if ($id === '' || $id === null) {
+            $sql = "SELECT * FROM turnos";
+            $statement = $this->pdo->prepare($sql);
+            $statement->execute();
+
+            $turnos = $statement->fetchAll();
+
+            return $turnos;
+        }
+         else {
+            $sql = "SELECT * FROM turnos WHERE id = :id_turno";
+            $statement = $this->pdo->prepare($sql);
+            $statement->bindParam(":id_turno", $id);
+            $statement->execute();
+
+            $turnos = $statement->fetch(PDO::FETCH_ASSOC);
+
+            return $turnos;
+        }
+    }
+
+    public function exibeTipoFuncionario()
+    {
+        $sql = "SELECT *
+            FROM tipos_de_funcionario";
         $statement = $this->pdo->prepare($sql);
         $statement->execute();
 
-        $turnos = $statement->fetchAll();
+        $tipoFuncionario = $statement->fetchAll();
 
-        return $turnos;
-        }
-        
-        public function exibeTipoFuncionario()
-        {
-            $sql = "SELECT *
-            FROM tipos_de_funcionario";
-            $statement = $this->pdo->prepare($sql);
-            $statement->execute();
-    
-            $tipoFuncionario = $statement->fetchAll();
-    
-            return $tipoFuncionario;
-            }
+        return $tipoFuncionario;
     }
+    public function checkAdmin()
+    {
+        if ($_SESSION['funcionario']['id_tipo'] == 2) {
+            return true;
+        }
+        return false;
+    }
+}
 
 
 $objUser = new User;
 
-if (isset($_POST['id_funcionario'])) echo $objUser->baterPonto($_POST['id_funcionario']);
+if (isset($_POST['id_funcionario'], $_POST['latitude'], $_POST['longitude'])) echo $objUser->baterPonto($_POST['id_funcionario'], $_POST['latitude'], $_POST['longitude']);
 
 if (isset($_GET['ultima_marcacao'])) echo $objUser->exibeMarcacao($_GET['ultima_marcacao']);
