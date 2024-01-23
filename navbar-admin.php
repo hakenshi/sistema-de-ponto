@@ -111,6 +111,7 @@
 	<ul class="navbar-nav ms-auto text-left">
 		<li class="nav-item"><a class="nav-link active" href="admin_page.php">Cadastrar funcionário </a></li>
 		<li class="nav-item"><a class="nav-link active" href="list_data_page.php">Ver dados</a></li>
+		<li class="nav-item"><a class="nav-link active" href="list_point_page.php">Ver pontos</a></li>
 		<li class="nav-item"><a class="nav-link active" href="logout.php">Sair</a></li>
 	</ul>
 

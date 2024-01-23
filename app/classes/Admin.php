@@ -152,11 +152,48 @@ class Admin
             return "ERRO AO ALTERAR STATUS DO FUCNIONÁRIO: " . $e->getMessage();
         }
     }
+
+    public function listarPontos($nome = null){
+        try {
+            if($nome === null || $nome === ""){
+            $sql = "SELECT nome, email, cpf, matricula, cargo, data_nascimento, data_admissao, ponto, ponto_tipo, latitude,longitude
+            from pontos
+            inner join sistema_de_ponto.funcionarios f on pontos.id_funcionario = f.id
+        ";
+        $statement = $this->pdo->prepare($sql);
+        $statement->execute();
+        if($statement->rowCount() > 0){
+            $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+            return $data;
+        }
+        else{
+            return false;
+        }
+    }
+    else{
+        $sql = "SELECT nome, email, cpf, matricula, cargo, data_nascimento, data_admissao, ponto, ponto_tipo, latitude,longitude
+        from pontos
+        inner join sistema_de_ponto.funcionarios f on pontos.id_funcionario = f.id
+        where nome = :nome";
+        $statement = $this->pdo->prepare($sql);
+        $statement->bindParam(":nome", $nome);
+        if($statement -> rowCount() > 0){
+           $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+            return $data;
+        }
+        else{
+            return false;
+        }
+    }
+        } catch (PDOException $e) {
+            return "ERRO AO LISTAR PONTOS DA TABLEA: ". $e->getMessage();
+        }
+    }
+
 }
 
 $admin = new Admin();
 if (isset($_POST['id_funcionario'])) {
-    // Edit existing user
     $id_funcionario = $_POST['id_funcionario'];
     $nome = $_POST['nome'];
     $turno = $_POST['turno'];
@@ -184,7 +221,6 @@ if (isset($_POST['id_funcionario'])) {
     echo $editarFuncionario;
 
 } elseif (isset($_POST['nome'], $_POST['turno'], $_POST['tipo_funcionario'], $_POST['email'], $_POST['senha'], $_POST['cpf'], $_POST['matricula'], $_POST['cargo'], $_POST['data_nascimento'])) {
-    // Register new user
     $cadastro = $admin->cadastrarFuncionario(
         $_POST['nome'],
         $_POST['turno'],
@@ -203,3 +239,4 @@ if (isset($_POST['id_funcionario'])) {
 if (isset($_POST['idFuncionario'], $_POST['status'])) {
     echo $admin->alteraStatus($_POST['idFuncionario'], $_POST['status']);
 }
+

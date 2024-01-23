@@ -47,7 +47,8 @@ $funcionario_status = $_SESSION['funcionario']['funcionario_status'];
           else{
         ?>
         <button name="ponto" class="btn btn-danger" id="bater-ponto"> Bater ponto</button>
-        <button id="espera" class="btn btn-primary" disabled style="display: none;"> Batendo ponto...</button>
+        <div id="espera" class="spinner-border text-danger" style="display: none;">
+      </div>
         <?php 
           }
         ?>

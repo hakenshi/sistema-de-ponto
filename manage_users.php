@@ -86,7 +86,7 @@ $tipoFuncionarios = $objUser->exibeTipoFuncionario();
                         echo "<option selected value=" . $tipoFuncionario['id'] . ">" . $tipoFuncionario['user_type'] . "</option>";
                      }
                      else{
-                        echo "<option selected value=" . $tipoFuncionario['id'] . ">" . $tipoFuncionario['user_type'] . "</option>";
+                        echo "<option value=" . $tipoFuncionario['id'] . ">" . $tipoFuncionario['user_type'] . "</option>";
                      }
                      }
                      ?> 
