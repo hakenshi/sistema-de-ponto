@@ -1,30 +1,36 @@
-function alterarStatus(idFuncionario, status){ 
-        $.ajax({
-            type: "post",
-            url: "app/classes/Admin.php",
-            data:{
-                idFuncionario: idFuncionario,
-                status: status
-            },
-            dataType: "json",
-            success: function (response) {
-                if(response.code == 200)
-                alert(response.mensagem)
-                location.reload()
-            },
-            error: (xhr, status, error)=>{
-                console.error(`Erro na requisição AJAX: ${status} Tipo do erro: ${error}`)
-            }
-        });
+function alterarStatus(idFuncionario, status) {
+    if(idFuncionario === 1){
+        alert('Não é possível alterar o status deste usuário, pois, ele é um administrador.')
+        return
     }
-    
+    $.ajax({
+        type: "post",
+        url: "app/classes/Admin.php",
+        data: {
+            idFuncionario: idFuncionario,
+            status: status
+        },
+        dataType: "json",
+        success: function (response) {
+            if (response.code == 200)
+                alert(response.mensagem)
+            location.reload()
+        },
+        error: (xhr, status, error) => {
+            console.error(`Erro na requisição AJAX: ${status} Tipo do erro: ${error}`)
+        }
+    });
+}
 
-$(()=>{
+$(() => {
     const cadastrarFuncionario = $("#cadastrar-funcionario")
 
     const editarFuncionario = $("#editar-funcionario")
 
-    cadastrarFuncionario.on("submit", e =>{
+    const registrarPonto = $("#registrar-ponto")
+
+    
+    cadastrarFuncionario.on("submit", e => {
         e.preventDefault()
         $.ajax({
             type: "post",
@@ -42,20 +48,21 @@ $(()=>{
             },
             dataType: "json",
             success: function (response) {
-                if(response.code === 200){
+                if (response.code === 200) {
                     alert(response.mensagem)
                     location.replace('/sistema-de-ponto/list_data_page.php')
                 }
-                else{
+                else {
                     alert("Erro ao cadastrar funcionário")
                 }
             },
-            error: (xhr, status, error)=>{
+            error: (xhr, status, error) => {
                 console.error(`Erro na requisição AJAX: ${status} Tipo do erro: ${error}`)
             }
         })
     })
-    editarFuncionario.on("submit", e =>{
+
+    editarFuncionario.on("submit", e => {
         e.preventDefault()
         $.ajax({
             type: "post",
@@ -74,15 +81,41 @@ $(()=>{
             },
             dataType: "json",
             success: function (response) {
-                if(response.code === 200){
+                if (response.code === 200) {
                     console.log(response)
                     location.replace('/sistema-de-ponto/list_data_page.php')
                 }
-                
+
             },
-            error: (xhr, status, error)=>{
+            error: (xhr, status, error) => {
                 console.error(`Erro na requisição AJAX: ${status} Tipo do erro: ${error}`)
             }
         })
+    })
+
+    registrarPonto.on('submit', e =>{
+       e.preventDefault()
+        const idFuncionario = $("#idFuncionario").val()
+        const ponto = $("#data").val() + " " + $("#hora").val()
+        const pontoTipo = $("#entrada").is(":checked") ? "E" : "S"
+
+        $.ajax({
+            type: "post",
+            url: "app/classes/Admin.php",
+            data: {
+                idFuncionario: idFuncionario,
+                ponto: ponto,
+                pontoTipo: pontoTipo
+            },
+            dataType: "json",
+            success: function (response) {
+                if(response.code === 200) alert(response.mensagem)
+            },
+            error: (xhr, status, error) => {
+                console.error(`Erro na requisição AJAX: ${status} Tipo do erro: ${error}`)
+                console.trace(error)
+            }
+        });
+        
     })
 })

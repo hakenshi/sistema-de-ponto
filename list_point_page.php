@@ -12,18 +12,12 @@ if (isset($_SESSION['funcionario']) && $_SESSION['funcionario'] !== null && $obj
    session_destroy();
    unset($_SESSION['funcionario']);
    header("location: index.php");
+   die;
 }
 
 $admin = new Admin;
-
-if(isset($_POST['nome'])){
-   echo $admin->listarPontos($_POST['nome']);
-}
-else{  
 $pontos = $admin->listarPontos();
-}
 
-$nomes = $admin->listarUsuarios();
 ?>
 
 <!DOCTYPE html>
@@ -32,6 +26,7 @@ $nomes = $admin->listarUsuarios();
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="css/all.min.css">
    <title>Admin Control Panel</title>
 </head>
 
@@ -40,54 +35,59 @@ $nomes = $admin->listarUsuarios();
    include __DIR__ . '/navbar-admin.php';
    ?>
    <div class="container">
-      <div class="row">
-         <h1 class="p-4 text-center">Tabela de pontos</h1>
-         <div class="d-flex fle">
-            <div class="col-3 p-4">
-            
-               <select class="form-select p-3" name="nome" id="nome">
-                  <option value="0">Escolha um usuario</option>
-                  <?php
-                     foreach ($nomes as $nome) {
-                        echo "<option value=".$nome['nome'].">".$nome['nome']."";
-                     }
-                  ?>
-               </select>
+      <div class="row justify-content-center align-items-center flex-row">
+         <h1 class="m-0 p-4 text-center">Tabela de pontos</h1>
+         <div class="col-7 p-4 ">
+            <input class="form-control-sm mx-2" type="text" name="nome" id="nome" placeholder="Insira um nome">
+            <input class="form-control-sm mx-2" type="date" name="data-inicial" id="data-inicial" placeholder="Insira um data-inicial">
+            <input class="form-control-sm mx-2" type="date" name="data-final" id="data-final" placeholder="Insira uma data final">
+            <button id="filtrar" class="btn btn-primary mx-2 mb-2">Filtrar</button>
+            <button id="reset" class="btn btn-danger mx-2 mb-2">Reset</button>
          </div>
-         <div class="col align-self-end p-4">
-            <button class="btn btn-danger">Filtrar</button>
+      </div>
+      <div class="row justify-content-center flex-row">
+      <div class="col-auto mb-3">
+         <div class="form-check form-check-inline">
+            <input
+               class="form-check-input"
+               type="radio"
+               name="ordem"
+               id="asc"
+               checked
+            />
+            <label class="form-check-label" for="asc">Ordem Crescente</label>
          </div>
+         <div class="form-check form-check-inline">
+            <input
+               class="form-check-input"
+               type="radio"
+               name="ordem"
+               id="desc"
+               
+            />
+            <label class="form-check-label" for="desc">Ordem Decrescente</label>
+         </div>   
          </div>
-         <div class="col table-responsive-md ">
-            <table class="table table-bordered  table-sm" id="listar-usuarios">
+      </div>
+      <div class="row justify-content-center align-items-center">
+         <div class=" col-10 table-responsive-md">
+            <table class="table table-bordered  table-sm" id="listar-usuarios" style="width: 1000px;">
                <thead class="text-center" style="background-color: #da0037; color: white;">
                   <tr>
                      <th class="p-2 text-center">Nome</th>
-                     <th class="p-2 text-center">Email</th>
-                      <th class="p-2 text-center">CPF</th>
-                     <th class="p-2 text-center">Matrícula</th>
-                     <th class="p-2 text-center">Cargo</th>
-                     <th class="p-2 text-center">Data de Nascimento</th>
-                     <th class="p-2 text-center">Data de Admissão</th>
                      <th class="p-2 text-center">Ponto</th>
                      <th class="p-2 text-center">Entrada / Saida</th>
-                     <th class="p-2 text-center">Cordendas</th>   
+                     <th class="p-2 text-center">Cordendas</th>
                   </tr>
                </thead>
                <tbody>
                   <?php
                   foreach ($pontos as $ponto) {
                      echo "<tr>";
-                     echo "<td class='text-center'>". $ponto['nome'] . "</td>";
-                     echo "<td class='text-center'>". $ponto['email'] . "</td>";
-                     echo "<td class='text-center'>". $ponto['cpf'] . "</td>";
-                     echo "<td class='text-center'>". $ponto['matricula'] . "</td>";
-                     echo "<td class='text-center'>". $ponto['cargo'] . "</td>";
-                     echo "<td class='text-center'>". $ponto['data_nascimento'] . "</td>";
-                     echo "<td class='text-center'>". $ponto['data_admissao'] . "</td>";
-                     echo "<td class='text-center'>". $ponto['ponto'] . "</td>";
+                     echo "<td class='text-center'>" . $ponto['nome'] . "</td>";
+                     echo "<td class='text-center'>" . date("d-m-Y H:i:s",strtotime($ponto['ponto'])) . "</td>";
                      echo "<td class='text-center'>" . $ponto['ponto_tipo'] . "</td>";
-                     echo "<td class='text-center'>". $ponto['latitude'] . " , " . $ponto['longitude'] . "</td>";
+                     echo "<td class='text-center'>" . $ponto['latitude'] . " , " . $ponto['longitude'] . "</td>";
                      echo "</tr>";
                   }
                   ?>
@@ -96,8 +96,12 @@ $nomes = $admin->listarUsuarios();
          </div>
       </div>
    </div>
+   </div>
    <script src="js/jquery-3.7.1.min.js"></script>
-   <script src="js/ajax-adm.js"></script>
+   <script src="js/ajax-filter.js"></script>
+   <script>
+      
+   </script>
 </body>
 
 </html>

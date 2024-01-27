@@ -1,7 +1,6 @@
 <?php
 require_once '/Programas/xampp/htdocs/sistema-de-ponto/app/database/database.php';
 
-
 class Admin
 {
 
@@ -75,19 +74,19 @@ class Admin
     {
         try {
             $sql = "UPDATE funcionarios 
-                    SET nome = '". $dados['nome'] ."',
-                    id_turno = '". $dados['id_turno'] ."',
-                    id_tipo = '". $dados['id_tipo'] ."',
-                    email = '". $dados['email'] ."',";
-                    if (isset($dados['senha'])) {
-                        $dados['senha'] = password_hash($dados['senha'], PASSWORD_DEFAULT);
-                        $sql .= "senha = '". $dados['senha'] ."',";
-                    }  
-                   $sql.= "cpf = '". $dados['cpf'] ."',
-                    matricula = '". $dados['matricula'] ."',
-                    cargo = '". $dados['cargo'] ."',
-                    data_nascimento = '". $dados['data_nascimento'] ."'
-                    WHERE id = '". $idFuncionario. "'
+                    SET nome = '" . $dados['nome'] . "',
+                    id_turno = '" . $dados['id_turno'] . "',
+                    id_tipo = '" . $dados['id_tipo'] . "',
+                    email = '" . $dados['email'] . "',";
+            if (isset($dados['senha'])) {
+                $dados['senha'] = password_hash($dados['senha'], PASSWORD_DEFAULT);
+                $sql .= "senha = '" . $dados['senha'] . "',";
+            }
+            $sql .= "cpf = '" . $dados['cpf'] . "',
+                    matricula = '" . $dados['matricula'] . "',
+                    cargo = '" . $dados['cargo'] . "',
+                    data_nascimento = '" . $dados['data_nascimento'] . "'
+                    WHERE id = '" . $idFuncionario . "'
                     ";
             $statement = $this->pdo->prepare($sql);
             $statement->execute();
@@ -134,14 +133,14 @@ class Admin
         try {
             if ($id === null || $id === '') {
                 $sql = "SELECT * FROM funcionarios";
-    
+
                 $statement = $this->pdo->prepare($sql);
                 $statement->execute();
                 $funcionarios = $statement->fetchAll(PDO::FETCH_ASSOC);
                 return $funcionarios;
             } else {
                 $sql = "SELECT * FROM funcionarios WHERE id = :id";
-    
+
                 $statement = $this->pdo->prepare($sql);
                 $statement->bindParam(":id", $id);
                 $statement->execute();
@@ -153,45 +152,109 @@ class Admin
         }
     }
 
-    public function listarPontos($nome = null){
+    public function listarPontos($idFuncionario = null)
+    {
         try {
-            if($nome === null || $nome === ""){
-            $sql = "SELECT nome, email, cpf, matricula, cargo, data_nascimento, data_admissao, ponto, ponto_tipo, latitude,longitude
+
+            $sql = "SELECT nome, ponto, ponto_tipo, latitude, longitude
             from pontos
             inner join sistema_de_ponto.funcionarios f on pontos.id_funcionario = f.id
         ";
-        $statement = $this->pdo->prepare($sql);
-        $statement->execute();
-        if($statement->rowCount() > 0){
-            $data = $statement->fetchAll(PDO::FETCH_ASSOC);
-            return $data;
-        }
-        else{
+            $sql .= ($idFuncionario === null) ? " WHERE 1" : " WHERE f.id = :idFuncionario";
+            
+            $statement = $this->pdo->prepare($sql);
+           if($idFuncionario !== null) $statement->bindParam(":idFuncionario", $idFuncionario, PDO::PARAM_INT);
+            $statement->execute();
+           
+            if ($statement->rowCount() > 0) {
+                $data = $statement->fetchAll(PDO::FETCH_ASSOC);
+                return $data;
+            } 
             return false;
+        } catch (PDOException $e) {
+            return "ERRO AO LISTAR PONTOS DA TABLEA: " . $e->getMessage();
         }
     }
-    else{
-        $sql = "SELECT nome, email, cpf, matricula, cargo, data_nascimento, data_admissao, ponto, ponto_tipo, latitude,longitude
+
+
+    public function filtrarUsuarios($nome, $dataInicial, $dataFinal, $ordem, $idFuncionario)
+    {
+        try {
+            $results = $this->fetchFiltrarUsuarios($nome, $dataInicial, $dataFinal, $ordem, $idFuncionario);
+             
+            $arrayRetorno['data'] = $results;
+            $arrayRetorno['code'] = 200;
+            $arrayRetorno['mensagem'] = "Usuários filtrados com sucesso";
+            return json_encode($arrayRetorno);
+        } catch (\Throwable $e) {
+            return json_encode("ERRO AO FILTRAR PONTOS DA TABELA: " . $e->getMessage());
+        }
+    }
+
+    public function fetchFiltrarUsuarios($nome = null, $dataInicial = null, $dataFinal = null, $ordem = null, $idFuncionario = null)
+    {
+        try {
+       
+       $sql = "SELECT nome, ponto, ponto_tipo, latitude, longitude
         from pontos
         inner join sistema_de_ponto.funcionarios f on pontos.id_funcionario = f.id
-        where nome = :nome";
-        $statement = $this->pdo->prepare($sql);
-        $statement->bindParam(":nome", $nome);
-        if($statement -> rowCount() > 0){
-           $data = $statement->fetchAll(PDO::FETCH_ASSOC);
-            return $data;
-        }
-        else{
+        where 1 ";
+            
+            if(!empty($nome)){
+                $sql .= "AND nome = :nome ";
+            }
+            
+            if(!empty($idFuncionario)){
+                $sql .= " AND id_funcionario = :idFuncionario";
+            }
+
+            if(!empty($dataInicial) && !empty($dataFinal)){
+                $sql .= " AND cast(ponto as date) between cast(:dataInicial as date) and cast(:dataFinal as date)";
+            }
+            
+            $sql .= ($ordem == 1) ? " ORDER BY ponto DESC" : " ORDER BY ponto ASC";
+            
+            $statement = $this->pdo->prepare($sql);
+
+            if(!empty($nome)){
+                $statement->bindParam(":nome", $nome, PDO::PARAM_STR);
+            }
+            
+            if(!empty($idFuncionario)){
+                $statement->bindParam(":idFuncionario", $idFuncionario, PDO::PARAM_INT);
+            }
+
+            if(!empty($dataInicial) && !empty($dataFinal)){
+            $statement->bindParam(":dataInicial", $dataInicial);
+            $statement->bindParam(":dataFinal", $dataFinal);
+            }
+            $statement->execute();
+            if ($statement->rowCount() > 0) {
+                return $statement->fetchAll(PDO::FETCH_ASSOC);
+            }
             return false;
+        } catch (\PDOException $e) {
+            error_log("ERRO AO FILTRAR PONTOS DA TABELA: " . $e->getMessage());
+            return json_encode("ERRO AO FILTRAR PONTOS DA TABELA: " . $e->getMessage());
         }
     }
-        } catch (PDOException $e) {
-            return "ERRO AO LISTAR PONTOS DA TABLEA: ". $e->getMessage();
-        }
-    }
+    public function registrarPonto($idFuncionario, $ponto, $pontoTipo){
+        try {
+        $sql = "INSERT INTO pontos (id_funcionario, ponto, ponto_tipo) values(:idFuncionario, :ponto, :pontoTipo)";
+        $statement = $this->pdo->prepare($sql);
+        $statement->bindParam(":idFuncionario", $idFuncionario);
+        $statement->bindParam(":ponto", $ponto);
+        $statement->bindParam(":pontoTipo", $pontoTipo);
+        $statement->execute();
+        $arrayRetorno['code'] = 200;
+        $arrayRetorno['mensagem'] = "Ponto registrado com sucesso";
+        return json_encode($arrayRetorno);
+        } catch (\PDOException $e) {
+            return json_encode("ERRO AO REGISTRAR PONTOS NA TABELA: " . $e->getMessage());
 
+        }
+    }
 }
-
 $admin = new Admin();
 if (isset($_POST['id_funcionario'])) {
     $id_funcionario = $_POST['id_funcionario'];
@@ -219,7 +282,6 @@ if (isset($_POST['id_funcionario'])) {
 
     $editarFuncionario = $admin->editarFuncionario($dados, $id_funcionario);
     echo $editarFuncionario;
-
 } elseif (isset($_POST['nome'], $_POST['turno'], $_POST['tipo_funcionario'], $_POST['email'], $_POST['senha'], $_POST['cpf'], $_POST['matricula'], $_POST['cargo'], $_POST['data_nascimento'])) {
     $cadastro = $admin->cadastrarFuncionario(
         $_POST['nome'],
@@ -236,7 +298,16 @@ if (isset($_POST['id_funcionario'])) {
 }
 
 
+
+
 if (isset($_POST['idFuncionario'], $_POST['status'])) {
     echo $admin->alteraStatus($_POST['idFuncionario'], $_POST['status']);
 }
 
+if (isset($_POST['nome'], $_POST['dataInicial'], $_POST['dataFinal'], $_POST['ordem'], $_POST['idFuncionario'])) {
+    echo $admin->filtrarUsuarios($_POST['nome'], $_POST['dataInicial'], $_POST['dataFinal'], $_POST['ordem'], $_POST['idFuncionario']);
+}
+
+if(isset($_POST['idFuncionario'], $_POST['ponto'], $_POST['pontoTipo'])){
+    echo $admin->registrarPonto($_POST['idFuncionario'], $_POST['ponto'], $_POST['pontoTipo']);
+}

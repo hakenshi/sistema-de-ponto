@@ -109,6 +109,8 @@
   <div class="collapse navbar-collapse" id="main_nav">
 	
 	<ul class="navbar-nav ms-auto text-left">
+		<li class="nav-item"><a class="nav-link active" href="user_page.php">Bater ponto</a></li>
+		<li class="nav-item"><a class="nav-link active" href="list_user_point_page.php">Meus pontos</a></li>
 		<li class="nav-item"><a class="nav-link active" href="logout.php">Sair</a></li>
 	</ul>
 
