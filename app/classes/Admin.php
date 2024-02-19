@@ -1,5 +1,5 @@
 <?php
-require_once '/Programas/xampp/htdocs/sistema-de-ponto/app/database/database.php';
+require_once 'C:\xampp\htdocs\sistema-de-ponto\app\database\database.php';
 
 class Admin
 {
@@ -181,7 +181,6 @@ class Admin
     {
         try {
             $results = $this->fetchFiltrarUsuarios($nome, $dataInicial, $dataFinal, $ordem, $idFuncionario);
-             
             $arrayRetorno['data'] = $results;
             $arrayRetorno['code'] = 200;
             $arrayRetorno['mensagem'] = "Usuários filtrados com sucesso";
@@ -234,7 +233,6 @@ class Admin
             }
             return false;
         } catch (\PDOException $e) {
-            error_log("ERRO AO FILTRAR PONTOS DA TABELA: " . $e->getMessage());
             return json_encode("ERRO AO FILTRAR PONTOS DA TABELA: " . $e->getMessage());
         }
     }

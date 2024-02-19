@@ -2,7 +2,7 @@
 
 session_start();
 
-require_once '/Programas/xampp/htdocs/sistema-de-ponto/app/database/database.php';
+require_once 'C:\xampp\htdocs\sistema-de-ponto\app\database\database.php';
 
 class User
 {

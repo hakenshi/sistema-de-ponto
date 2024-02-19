@@ -52,11 +52,9 @@ $(function () {
             },
             dataType: "json",
             success: function (response) {
-                console.log(response.data)
                 if (response.code === 200) {
                     response.data === false ? alert("Nenhum dado foi encontrado ") : renderizaTabela(response.data)
                 }
-
             },
             error: (xhr, status, error) => {
                 console.error(`Erro na requisição AJAX: ${status} Tipo do erro: ${error.message}`)

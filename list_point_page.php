@@ -38,6 +38,7 @@ $pontos = $admin->listarPontos();
       <div class="row justify-content-center align-items-center flex-row">
          <h1 class="m-0 p-4 text-center">Tabela de pontos</h1>
          <div class="col-7 p-4 ">
+            <input type="hidden" id="id-funcionario" name="id-funcionario" value="">
             <input class="form-control-sm mx-2" type="text" name="nome" id="nome" placeholder="Insira um nome">
             <input class="form-control-sm mx-2" type="date" name="data-inicial" id="data-inicial" placeholder="Insira um data-inicial">
             <input class="form-control-sm mx-2" type="date" name="data-final" id="data-final" placeholder="Insira uma data final">
@@ -46,27 +47,15 @@ $pontos = $admin->listarPontos();
          </div>
       </div>
       <div class="row justify-content-center flex-row">
-      <div class="col-auto mb-3">
-         <div class="form-check form-check-inline">
-            <input
-               class="form-check-input"
-               type="radio"
-               name="ordem"
-               id="asc"
-               checked
-            />
-            <label class="form-check-label" for="asc">Ordem Crescente</label>
-         </div>
-         <div class="form-check form-check-inline">
-            <input
-               class="form-check-input"
-               type="radio"
-               name="ordem"
-               id="desc"
-               
-            />
-            <label class="form-check-label" for="desc">Ordem Decrescente</label>
-         </div>   
+         <div class="col-auto mb-3">
+            <div class="form-check form-check-inline">
+               <input class="form-check-input" type="radio" name="ordem" id="asc" checked />
+               <label class="form-check-label" for="asc">Ordem Crescente</label>
+            </div>
+            <div class="form-check form-check-inline">
+               <input class="form-check-input" type="radio" name="ordem" id="desc" />
+               <label class="form-check-label" for="desc">Ordem Decrescente</label>
+            </div>
          </div>
       </div>
       <div class="row justify-content-center align-items-center">
@@ -85,9 +74,10 @@ $pontos = $admin->listarPontos();
                   foreach ($pontos as $ponto) {
                      echo "<tr>";
                      echo "<td class='text-center'>" . $ponto['nome'] . "</td>";
-                     echo "<td class='text-center'>" . date("d-m-Y H:i:s",strtotime($ponto['ponto'])) . "</td>";
+                     echo "<td class='text-center'>" . date("d-m-Y H:i:s", strtotime($ponto['ponto'])) . "</td>";
                      echo "<td class='text-center'>" . $ponto['ponto_tipo'] . "</td>";
-                     echo "<td class='text-center'>" . $ponto['latitude'] . " , " . $ponto['longitude'] . "</td>";
+                     echo "<td class='text-center'><a class='text-decoration-none text-dark' href='https://www.google.com/maps?q=" . $ponto['latitude'] . "," . $ponto['longitude'] . "' target='_blank'>" . $ponto['latitude'] . ", " . $ponto['longitude'] . "</a></td>";
+
                      echo "</tr>";
                   }
                   ?>
@@ -100,7 +90,7 @@ $pontos = $admin->listarPontos();
    <script src="js/jquery-3.7.1.min.js"></script>
    <script src="js/ajax-filter.js"></script>
    <script>
-      
+
    </script>
 </body>
 

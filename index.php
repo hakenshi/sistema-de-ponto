@@ -25,7 +25,7 @@
                     <p>Faça log-in para acessar o sistema</p>
                     <form action="login.php" method="post">
                         <div>
-                            <label  for="login" class="form-label"></label>
+                            <label  for="login" class="form-label"><i class="fa-solid fa-user"></i></label>
                             <input type="text" id="login" name="login" class="p-3 fs-5 form-control" placeholder="Login">
                         </div>
                         <div class="mb-5">
