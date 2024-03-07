@@ -1,5 +1,7 @@
 <?php
-require_once 'C:\xampp\htdocs\sistema-de-ponto\app\database\database.php';
+require_once __DIR__ . '/../database/database.php';
+
+
 
 class Admin
 {
@@ -302,7 +304,7 @@ if (isset($_POST['idFuncionario'], $_POST['status'])) {
     echo $admin->alteraStatus($_POST['idFuncionario'], $_POST['status']);
 }
 
-if (isset($_POST['nome'], $_POST['dataInicial'], $_POST['dataFinal'], $_POST['ordem'], $_POST['idFuncionario'])) {
+if (isset($_POST['nome'], $_POST['dataInicial'], $_POST['dataFinal'], $_POST['orm'], $_POST['idFuncionario'])) {
     echo $admin->filtrarUsuarios($_POST['nome'], $_POST['dataInicial'], $_POST['dataFinal'], $_POST['ordem'], $_POST['idFuncionario']);
 }
 

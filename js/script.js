@@ -6,7 +6,7 @@ function atualizaRelogio(){
     horaAtual.textContent = data
 }
 
-bloqueiaNumeros(nome)
+
 atualizaRelogio()
 setInterval(atualizaRelogio, 1000)
 

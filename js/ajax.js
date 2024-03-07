@@ -24,6 +24,7 @@ const ocultarBotao = e =>{
     }
 }
 
+
 $(function () {
 
     exibeMarcacao()
@@ -32,7 +33,7 @@ $(function () {
     const baterPonto = $("#bater-ponto")
     const ultimaMarcacao = $("#ultima-marcacao")
     const result = $("#result")
-
+    
 
 
     baterPonto.on('click', () => {
@@ -117,11 +118,7 @@ $(function () {
         });
 
     }
-    
-    
 
-   
-    
 })
 
 

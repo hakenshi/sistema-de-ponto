@@ -23,17 +23,16 @@ class User
             $statement = $this->pdo->prepare($sql);
             $statement->bindValue(":email", $login);
             $statement->execute();
-            
+
             if ($statement->rowCount() > 0) {
                 $data = $statement->fetch(PDO::FETCH_ASSOC);
-                if(password_verify($senha, $data['senha'])){
-                $_SESSION['funcionario'] = $data;
+                if (password_verify($senha, $data['senha'])) {
+                    $_SESSION['funcionario'] = $data;
 
-                return true;
-            }
-            else{
-            return false;
-            }
+                    return true;
+                } else {
+                    return false;
+                }
             } else {
                 return false;
             }
@@ -152,8 +151,7 @@ class User
             $turnos = $statement->fetchAll();
 
             return $turnos;
-        }
-         else {
+        } else {
             $sql = "SELECT * FROM turnos WHERE id = :id_turno";
             $statement = $this->pdo->prepare($sql);
             $statement->bindParam(":id_turno", $id);
@@ -168,7 +166,7 @@ class User
     public function exibeTipoFuncionario()
     {
         $sql = "SELECT *
-            FROM tipos_de_funcionario";
+        FROM tipos_de_funcionario";
         $statement = $this->pdo->prepare($sql);
         $statement->execute();
 
@@ -184,6 +182,41 @@ class User
         return false;
     }
 
+    public function editarUsuario($nome, $email, $senha, $dataNascimento, $id)
+    {
+    
+        try {
+            $sql = "UPDATE funcionarios SET nome = :nome, email = :email";
+            if (!empty($senha)) {
+                $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
+                $sql .= ", senha = :senha ";
+            }
+            $sql .= ",data_nascimento = :dataNascimento WHERE id = :id";
+
+            $statement = $this->pdo->prepare($sql);
+
+            $statement->bindValue(":nome", $nome);
+            $statement->bindValue(":email", $email);
+            if(!empty($senha)){
+            $statement->bindValue(":senha", $senha_hash);
+            }
+            $statement->bindValue(":dataNascimento", $dataNascimento);
+            $statement->bindValue(":id", $id);
+
+            $statement->execute();
+
+            return json_encode([
+                'status' => 200,
+                'mensagem' => 'Dados editados com sucesso'
+            ]);
+        
+        } catch (\PDOException $e) {
+            return json_encode([
+                'status' => 400,
+                'mensagem' => "não foi possível editar usuário " . $e->getMessage()
+            ]);
+        }
+    }
 }
 
 

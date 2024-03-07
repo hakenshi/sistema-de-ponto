@@ -94,15 +94,14 @@
 	// DOMContentLoaded  end
 </script>
 
-</head>
-<body>
+
 <!-- <div class="container"> -->
 
 <!-- ============= COMPONENT ============== -->
 <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: #DA0037;">
  <div class="container-fluid">
-	<a class="navbar-brand" href="#"><img src="css/imgs/placeholder-icon.png" class="d-inline-block" width="40px" style="margin-left: 25px;"></a>
-	<a class="nav-link text-light" href="#" aria-current="page">Olá, <?php echo $_SESSION['funcionario']['nome']?></a>
+	<a class="navbar-brand" href="user_profile.php"><img src="css/imgs/placeholder-icon.png" class="d-inline-block" width="40px" style="margin-left: 25px;"></a>
+	<a class="nav-link text-light" href="user_profile.php" aria-current="page">Editar perfil</a>
   <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#main_nav"  aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -117,5 +116,3 @@
   </div> <!-- navbar-collapse.// -->
  </div> <!-- container-fluid.// -->
 </nav>
-</body>
-</html>
