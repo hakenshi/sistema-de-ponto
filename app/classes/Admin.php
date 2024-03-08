@@ -80,7 +80,7 @@ class Admin
                     id_turno = '" . $dados['id_turno'] . "',
                     id_tipo = '" . $dados['id_tipo'] . "',
                     email = '" . $dados['email'] . "',";
-            if (isset($dados['senha'])) {
+            if (!empty($dados['senha'])) {
                 $dados['senha'] = password_hash($dados['senha'], PASSWORD_DEFAULT);
                 $sql .= "senha = '" . $dados['senha'] . "',";
             }

@@ -1,6 +1,6 @@
 <?php 
 
-    require __DIR__.'/app/database/database.php';
+    require __DIR__.'../app/database/database.php';
     
 
 ?>

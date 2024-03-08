@@ -2,8 +2,8 @@
 
 if (isset($_POST['login']) && !empty($_POST['login']) && isset($_POST['senha']) && !empty($_POST['senha'])) {
 
-     require __DIR__ . '/app/database/database.php';
-     require __DIR__ . '/app/classes/User.php';
+     require __DIR__ . '../app/database/database.php';
+     require __DIR__ . '../app/classes/User.php';
 
      $objUser = new User();
 
